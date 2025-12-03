@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Weather Scout
 
-## Getting Started
+Форма для получения погоды по координатам или выбранной стране/городу. После успешной валидации пользователь переходит на экран с результатом, фон которого меняется в зависимости от температуры.
 
-First, run the development server:
+## Стек
+
+- Next.js 16 (App Router) + TypeScript
+- Tailwind CSS 4 + стилизованные shadcn-подобные UI компоненты
+- Zustand для хранения запроса и результата
+- @tanstack/react-query + axios для работы с Open-Meteo API
+- zod + кастомный резолвер для react-hook-form
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Как работает
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. На главной странице выберите ввод координат или пару страна/город из поддерживаемого списка.
+2. Zod проверяет корректность ввода. Для городов дополнительно используется геокодинг Open-Meteo.
+3. React Query отправляет запрос к Open-Meteo, результат и параметры сохраняются в Zustand.
+4. Пользователь перенаправляется на `/weather`, где фон страницы адаптируется под температуру, а успех/ошибки отображаются через уведомления.
 
-## Learn More
+## Источник данных
 
-To learn more about Next.js, take a look at the following resources:
+- Geocoding и прогноз: [Open-Meteo](https://open-meteo.com/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Скрипты
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — локальная разработка
+- `npm run build` — production-сборка
+- `npm run start` — запуск собранного проекта
+- `npm run lint` — проверка линтером
