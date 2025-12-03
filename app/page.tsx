@@ -30,11 +30,15 @@ export default function Home() {
 
   const coordinateForm = useForm<CoordinateForm>({
     resolver: zodResolver(coordinateSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: { latitude: 51.1694, longitude: 71.4491 },
   });
 
   const cityForm = useForm<CityForm>({
     resolver: zodResolver(citySchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       country: supportedLocations[0]?.country ?? '',
       city: supportedLocations[0]?.cities[0] ?? '',
@@ -98,37 +102,37 @@ export default function Home() {
       : cityForm.handleSubmit(submitCity);
 
   return (
-    <main className="relative min-h-screen overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden pb-14 sm:pb-16 lg:pb-20">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.45),transparent_30%),radial-gradient(circle_at_80%_15%,rgba(16,185,129,0.35),transparent_28%),radial-gradient(circle_at_40%_80%,rgba(14,165,233,0.35),transparent_30%)]" />
         <div className="absolute inset-0 bg-linear-to-br from-slate-950/70 via-slate-950/40 to-slate-900/70 backdrop-blur-[2px]" />
       </div>
 
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
-        <header className="space-y-4">
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 sm:gap-12 sm:px-6 sm:py-14 md:px-8 lg:gap-14 lg:px-10 lg:py-16 xl:px-12">
+        <header className="space-y-4 text-center sm:space-y-5 sm:text-left">
           <p className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-white/80 uppercase shadow-md shadow-sky-500/10 backdrop-blur">
             Weather Scout · Next.js · Zustand · React Query
           </p>
-          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-            <div className="space-y-2">
-              <h1 className="text-3xl leading-tight font-black sm:text-4xl lg:text-5xl">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-8 xl:gap-10">
+            <div className="space-y-2 sm:space-y-3 md:space-y-4">
+              <h1 className="text-2xl leading-tight font-black sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl">
                 Получите актуальную погоду
               </h1>
-              <p className="text-base text-white/85 sm:text-lg">
+              <p className="text-base text-white/85 sm:text-lg md:text-xl lg:max-w-3xl xl:max-w-4xl">
                 Введите координаты или выберите страну и город. Данные валидируются, хранятся в
                 Zustand и отправляются на экран результатов.
               </p>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 px-5 py-4 text-sm text-white/85 shadow-xl shadow-emerald-500/10 backdrop-blur">
+            <div className="rounded-3xl border border-white/10 bg-white/5 px-5 py-4 text-sm text-white/85 shadow-xl shadow-emerald-500/10 backdrop-blur sm:px-6 sm:py-5 sm:text-base md:py-6">
               Данные приходят из <span className="font-semibold text-cyan-200">Open-Meteo</span>{' '}
               через Axios. Все запросы управляет React Query.
             </div>
           </div>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] xl:grid-cols-[1.1fr_0.9fr]">
-          <section className="rounded-4xl border border-white/10 bg-linear-to-br from-slate-900/70 via-slate-900/40 to-slate-800/40 p-6 shadow-2xl shadow-sky-500/15 backdrop-blur-2xl sm:p-8">
-            <div className="mb-6 space-y-3">
+        <div className="grid gap-6 sm:gap-8 md:gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12 xl:grid-cols-[1.1fr_0.9fr] xl:gap-14">
+          <section className="rounded-4xl border border-white/10 bg-linear-to-br from-slate-900/70 via-slate-900/40 to-slate-800/40 p-6 shadow-2xl shadow-sky-500/15 backdrop-blur-2xl sm:p-7 md:p-8 lg:p-10">
+            <div className="mb-6 space-y-2 sm:space-y-3 md:mb-8">
               <p className="text-xs font-semibold tracking-[0.22em] text-white/60 uppercase">
                 СПОСОБ ВВОДА
               </p>
@@ -150,51 +154,57 @@ export default function Home() {
               />
             </div>
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6 sm:space-y-7 md:space-y-8" onSubmit={handleSubmit}>
               {mode === 'coordinates' ? (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
+                <div className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:gap-6">
+                  <div className="space-y-2 sm:space-y-2.5">
                     <Label htmlFor="latitude">Широта (от -90 до 90)</Label>
                     <Input
                       id="latitude"
                       type="number"
                       step="0.0001"
+                      min={-90}
+                      max={90}
                       placeholder="51.1694"
                       inputMode="decimal"
-                      className={`rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus-visible:border-sky-300 focus-visible:ring-sky-200/60 ${coordinateForm.formState.errors.latitude ? 'border-rose-400 focus-visible:border-rose-300' : ''}`}
+                      aria-invalid={Boolean(coordinateForm.formState.errors.latitude)}
+                      className={`rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus-visible:border-sky-300 focus-visible:ring-sky-200/60 sm:text-lg ${coordinateForm.formState.errors.latitude ? 'border-rose-400 ring-1 ring-rose-300 focus-visible:border-rose-300 focus-visible:ring-rose-300' : ''}`}
                       {...coordinateForm.register('latitude', { valueAsNumber: true })}
                     />
                     {coordinateForm.formState.errors.latitude?.message ? (
-                      <p className="text-xs text-rose-300">
+                      <p className="text-xs text-rose-300 sm:text-sm">
                         {coordinateForm.formState.errors.latitude?.message}
                       </p>
                     ) : null}
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 sm:space-y-2.5">
                     <Label htmlFor="longitude">Долгота (от -180 до 180)</Label>
                     <Input
                       id="longitude"
                       type="number"
                       step="0.0001"
+                      min={-180}
+                      max={180}
                       placeholder="71.4491"
                       inputMode="decimal"
-                      className={`rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus-visible:border-sky-300 focus-visible:ring-sky-200/60 ${coordinateForm.formState.errors.longitude ? 'border-rose-400 focus-visible:border-rose-300' : ''}`}
+                      aria-invalid={Boolean(coordinateForm.formState.errors.longitude)}
+                      className={`rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus-visible:border-sky-300 focus-visible:ring-sky-200/60 sm:text-lg ${coordinateForm.formState.errors.longitude ? 'border-rose-400 ring-1 ring-rose-300 focus-visible:border-rose-300 focus-visible:ring-rose-300' : ''}`}
                       {...coordinateForm.register('longitude', { valueAsNumber: true })}
                     />
                     {coordinateForm.formState.errors.longitude?.message ? (
-                      <p className="text-xs text-rose-300">
+                      <p className="text-xs text-rose-300 sm:text-sm">
                         {coordinateForm.formState.errors.longitude?.message}
                       </p>
                     ) : null}
                   </div>
                 </div>
               ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
+                <div className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:gap-6">
+                  <div className="space-y-2 sm:space-y-2.5">
                     <Label htmlFor="country">Страна</Label>
                     <Select
                       id="country"
-                      className="rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus:border-sky-300 focus-visible:ring-sky-200/60"
+                      className="rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus:border-sky-300 focus-visible:ring-sky-200/60 sm:text-lg"
                       {...cityForm.register('country')}
                     >
                       {supportedLocations.map((location) => (
@@ -204,16 +214,16 @@ export default function Home() {
                       ))}
                     </Select>
                     {cityForm.formState.errors.country?.message ? (
-                      <p className="text-xs text-rose-300">
+                      <p className="text-xs text-rose-300 sm:text-sm">
                         {cityForm.formState.errors.country?.message}
                       </p>
                     ) : null}
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 sm:space-y-2.5">
                     <Label htmlFor="city">Город</Label>
                     <Select
                       id="city"
-                      className="rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus:border-sky-300 focus-visible:ring-sky-200/60"
+                      className="rounded-2xl border-white/15 bg-white/10 text-base shadow-inner shadow-white/10 focus:border-sky-300 focus-visible:ring-sky-200/60 sm:text-lg"
                       {...cityForm.register('city')}
                     >
                       {availableCities.map((city) => (
@@ -223,7 +233,7 @@ export default function Home() {
                       ))}
                     </Select>
                     {cityForm.formState.errors.city?.message ? (
-                      <p className="text-xs text-rose-300">
+                      <p className="text-xs text-rose-300 sm:text-sm">
                         {cityForm.formState.errors.city?.message}
                       </p>
                     ) : null}
@@ -231,7 +241,7 @@ export default function Home() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-white/85 shadow-inner shadow-white/10 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-white/85 shadow-inner shadow-white/10 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:text-base md:gap-6">
                 <div className="space-y-1">
                   <p className="font-semibold text-white">Как это работает</p>
                   <p className="text-white/70">
@@ -242,7 +252,7 @@ export default function Home() {
                 <Button
                   type="submit"
                   disabled={mutation.isPending}
-                  className="w-full rounded-2xl bg-linear-to-r from-sky-400 via-cyan-400 to-emerald-400 text-slate-900 shadow-lg shadow-cyan-500/25 hover:brightness-110 sm:w-auto"
+                  className="w-full rounded-2xl bg-linear-to-r from-sky-400 via-cyan-400 to-emerald-400 text-slate-900 shadow-lg shadow-cyan-500/25 hover:brightness-110 sm:w-auto sm:px-6 sm:py-3"
                 >
                   {mutation.isPending ? 'Запрашиваем...' : 'Получить погоду'}
                 </Button>
@@ -250,12 +260,12 @@ export default function Home() {
             </form>
           </section>
 
-          <aside className="flex flex-col gap-4">
-            <div className="rounded-4xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-emerald-500/10 backdrop-blur lg:p-7">
-              <p className="text-xs font-semibold tracking-[0.22em] text-white/60 uppercase">
+          <aside className="flex flex-col gap-4 sm:gap-6">
+            <div className="rounded-4xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-emerald-500/10 backdrop-blur sm:p-7 md:p-8 lg:p-9">
+              <p className="text-xs font-semibold tracking-[0.22em] text-white/60 uppercase sm:text-sm">
                 ГАРАНТИИ КОРРЕКТНОСТИ
               </p>
-              <ul className="mt-4 space-y-4 text-sm text-white/90">
+              <ul className="mt-4 space-y-4 text-sm text-white/90 sm:text-base md:space-y-5">
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-2 w-2 rounded-full bg-emerald-300" />
                   <div className="space-y-1">
@@ -288,17 +298,17 @@ export default function Home() {
               </ul>
             </div>
 
-            <div className="rounded-4xl border border-white/10 bg-linear-to-br from-slate-900/60 via-slate-900/30 to-slate-800/40 p-6 shadow-xl shadow-sky-500/10 backdrop-blur lg:p-7">
-              <p className="text-xs font-semibold tracking-[0.22em] text-white/60 uppercase">
+            <div className="rounded-4xl border border-white/10 bg-linear-to-br from-slate-900/60 via-slate-900/30 to-slate-800/40 p-6 shadow-xl shadow-sky-500/10 backdrop-blur sm:p-7 md:p-8 lg:p-9">
+              <p className="text-xs font-semibold tracking-[0.22em] text-white/60 uppercase sm:text-sm">
                 ПРИМЕР ЗАПРОСА
               </p>
-              <pre className="mt-4 overflow-auto rounded-2xl bg-black/50 p-4 text-xs text-cyan-100 shadow-inner shadow-black/30">
+              <pre className="mt-4 overflow-auto rounded-2xl bg-black/50 p-4 text-[11px] text-cyan-100 shadow-inner shadow-black/30 sm:text-xs md:p-5 md:text-sm">
                 {`GET https://api.open-meteo.com/v1/forecast
 ?latitude=51.1694
 &longitude=71.4491
 &current=temperature_2m,apparent_temperature,wind_speed_10m`}
               </pre>
-              <p className="mt-3 text-sm text-white/70">
+              <p className="mt-3 text-sm text-white/70 sm:text-base">
                 Температура перекрашивает экран результата в теплые или холодные оттенки.
               </p>
             </div>

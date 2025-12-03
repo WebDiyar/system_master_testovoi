@@ -151,9 +151,14 @@ export async function fetchWeather(search: WeatherSearch): Promise<WeatherResult
     };
   }
 
-  const parsedCoords = coordinateSchema.parse({
+  const parsedCoords = coordinateSchema.safeParse({
     latitude: search.latitude,
     longitude: search.longitude,
   });
-  return fetchWeatherByCoords(parsedCoords, 'coordinates');
+
+  if (!parsedCoords.success) {
+    throw new Error('Координаты заполнены некорректно');
+  }
+
+  return fetchWeatherByCoords(parsedCoords.data, 'coordinates');
 }
